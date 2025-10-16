@@ -11,6 +11,12 @@ posts = {
     }
 }
 
+id = 1
+
+def generate_id():
+    global id
+    id += 1 
+
 class Post(BaseModel):
     author: str
     content: str
@@ -20,7 +26,7 @@ class UpdatePost(BaseModel):
     content: str | None = None
 
 @app.get("/posts/{post_id}", status_code=status.HTTP_200_OK)
-def read_post(post_id: int):
+def read_post(post_id: int): 
     if post_id not in posts:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
     
@@ -29,16 +35,15 @@ def read_post(post_id: int):
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_post(post: Post):
-    if not posts:
-        posts[1] = post
-    else:
-        post_id = len(posts) + 1
-    posts[post_id] = post
 
-    return posts[post_id]
+    posts[id] = post
+    message = posts[id]
+    generate_id()
+    return message
 
 
-@app.put("/posts/{post_id}")
+
+@app.put("/posts/{post_id}") 
 def update_post(post_id: int, post: Post): 
     if post_id not in posts:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
